@@ -37,7 +37,7 @@ class EditProfile extends Component {
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
     }
-    if (nextProps.profile) {
+    if (nextProps.profile && nextProps.profile.profile) {
       const profile = nextProps.profile.profile;
 
       //Bring skills array back to CSV
