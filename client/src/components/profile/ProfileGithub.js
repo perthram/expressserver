@@ -11,6 +11,7 @@ class ProfileGithub extends Component {
       count: 5,
       sort: 'created: asc',
       repos: [],
+      error: null,
     };
   }
   componentDidMount() {
@@ -22,16 +23,20 @@ class ProfileGithub extends Component {
       .then(res => res.json())
       .then(data => {
         if (this.refs.myRef) {
-          this.setState({ repos: data });
+          if (Array.isArray(data)) this.setState({ repos: data });
+          else this.setState({ error: data });
         }
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        this.setState({ repos: [], error: err });
+      });
   }
   render() {
-    const { repos } = this.state;
+    const { repos, error } = this.state;
 
-    const repoItems = repos
-      ? repos.map(repo => (
+    const repoItems =
+      repos && repos.length > 0 ? (
+        repos.map(repo => (
           <div key={repo.id} className="card card-body mb-2">
             <div className="row">
               <div className="col-md-6">
@@ -60,7 +65,11 @@ class ProfileGithub extends Component {
             </div>
           </div>
         ))
-      : null;
+      ) : (
+        <div className="alert alert-danger" role="alert">
+          {error ? 'Github Username ' + error.message : 'Wrong Github Username'}
+        </div>
+      );
     if (repoItems) {
       return (
         <div ref="myRef">
